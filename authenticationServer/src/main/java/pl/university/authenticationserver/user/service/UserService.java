@@ -1,5 +1,6 @@
 package pl.university.authenticationserver.user.service;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.university.authenticationserver.user.document.User;
@@ -9,6 +10,7 @@ import pl.university.authenticationserver.user.exceptions.ApiRequestException;
 import pl.university.authenticationserver.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +33,31 @@ public class UserService {
                 .map(user -> new GetUserDTO(user.getId(), user.getFirstName(), user.getLastName()))
                 .orElseThrow(() -> new ApiRequestException("User not found for id: " + id));
     }
+
+
+
+
+
+
+
+
+
+
+    // todo сделать валидацию и поменить на user
+    public Optional<User> getByLogin(@NonNull String login) {
+        return userRepository.findByLogin(login).stream().filter(user -> login.equals(user.getLogin())).findFirst();
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
     public void updateUser(UpdateUserDTO dto, String id) {
