@@ -1,0 +1,14 @@
+#  Attention!
+#  Available only for demonstration, real parameters must be private!
+#------------
+
+spring:
+  data:
+    mongodb:
+      username: admin
+      password: admin
+      host: localhost
+      port: 27017
+      database: authentication_server
+      authentication-database: admin
+      auto-index-creation: true

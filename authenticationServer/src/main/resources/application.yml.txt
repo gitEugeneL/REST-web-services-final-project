@@ -1,0 +1,10 @@
+spring:
+  data:
+    mongodb:
+      username:
+      password:
+      host:
+      port:
+      database:
+      authentication-database:
+      auto-index-creation: true
