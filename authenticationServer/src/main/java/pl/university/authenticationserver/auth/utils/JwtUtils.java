@@ -1,5 +1,4 @@
-package pl.university.authenticationserver.auth.service;
-
+package pl.university.authenticationserver.auth.utils;
 
 import io.jsonwebtoken.Claims;
 import lombok.AccessLevel;

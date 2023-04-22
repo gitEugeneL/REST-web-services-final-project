@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import pl.university.authenticationserver.user.dto.CreateUserDTO;
 import pl.university.authenticationserver.user.dto.GetUserDTO;
 import pl.university.authenticationserver.user.dto.UpdateUserDTO;
 import pl.university.authenticationserver.user.exceptions.ApiRequestException;
@@ -22,6 +23,18 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+
+    @PostMapping("/create")
+    public ResponseEntity<String> CreateUser(@RequestBody @Valid CreateUserDTO dto, BindingResult bindingResult) {
+
+        String validateErrors = ValidateUtils.validate(bindingResult); // validate dto or throw
+        if (validateErrors != null) throw new ApiRequestException(validateErrors);
+
+        userService.createUser(dto);
+        return ResponseEntity.ok("user added successfully");
+    }
+
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping

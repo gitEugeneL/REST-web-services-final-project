@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 import pl.university.authenticationserver.auth.domain.JwtAuthentication;
-import pl.university.authenticationserver.auth.service.JwtProvider;
-import pl.university.authenticationserver.auth.service.JwtUtils;
+import pl.university.authenticationserver.auth.provider.JwtProvider;
+import pl.university.authenticationserver.auth.utils.JwtUtils;
 
 import java.io.IOException;
 

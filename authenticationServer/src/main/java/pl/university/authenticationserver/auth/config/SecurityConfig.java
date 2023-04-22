@@ -29,11 +29,11 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/api/auth/login", "/api/auth/token").permitAll()
+                                .requestMatchers("/api/user/login", "/api/user/validate", "/api/user/create")
+                                .permitAll()
                                 .anyRequest().authenticated()
                                 .and()
                                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 ).build();
     }
-
 }
