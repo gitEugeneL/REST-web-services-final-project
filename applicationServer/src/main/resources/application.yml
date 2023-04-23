@@ -1,0 +1,20 @@
+#  Attention!
+#  Available only for demonstration, real parameters must be private!
+#-----------
+server:
+  port: 8081
+
+
+#  Attention!
+#  Available only for demonstration, real parameters must be private!
+#-----------
+spring:
+  data:
+    mongodb:
+      username: admin
+      password: admin
+      host: localhost
+      port: 27018
+      database: application_server
+      authentication-database: admin
+      auto-index-creation: true

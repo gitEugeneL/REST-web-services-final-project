@@ -1,0 +1,18 @@
+#  Attention!
+#  Available only for demonstration, real parameters must be private!
+#------------
+
+version: "3.8"
+services:
+  mongo:
+    image: mongo
+    container_name: application_server_mongo_db
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    ports:
+      - 27018:27017
+    volumes:
+      - ./mongo-data:/data/db
+    command: --wiredTigerCacheSizeGB 1.5
