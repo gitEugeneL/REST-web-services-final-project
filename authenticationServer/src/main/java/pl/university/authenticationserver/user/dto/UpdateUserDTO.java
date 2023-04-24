@@ -4,13 +4,11 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class UpdateUserDTO {
 
     @NotNull

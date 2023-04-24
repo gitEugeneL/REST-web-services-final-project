@@ -46,15 +46,25 @@ public class UserService {
     public List<GetUserDTO> getUsers() {
         return userRepository.findAll()
                 .stream()
-                .map(user -> new GetUserDTO(user.getId(), user.getLastName(), user.getFirstName()))
+                .map(user -> new GetUserDTO(user.getId(), user.getLogin(), user.getLastName(), user.getFirstName()))
                 .collect(Collectors.toList());
     }
 
 
     public GetUserDTO getOneUser(String id) {
          return userRepository.findById(id)
-                .map(user -> new GetUserDTO(user.getId(), user.getFirstName(), user.getLastName()))
+                .map(user -> new GetUserDTO(user.getId(), user.getLogin(), user.getFirstName(), user.getLastName()))
                 .orElseThrow(() -> new ApiRequestException("User not found for id: " + id));
+    }
+
+
+    public GetUserDTO getAuthUser() {
+        // only auth user data
+        String authUserLogin = this.getAuthUserLogin();
+        //--------------------
+        return userRepository.findByLogin(authUserLogin)
+                .map(user -> new GetUserDTO(user.getId(), user.getLogin(), user.getFirstName(), user.getLastName()))
+                .orElseThrow(() -> new ApiRequestException("User does not exit"));
     }
 
 
@@ -94,7 +104,7 @@ public class UserService {
     }
 
 
-    public String getAuthUserLogin() {
+    private String getAuthUserLogin() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (String) authentication.getPrincipal();
     }

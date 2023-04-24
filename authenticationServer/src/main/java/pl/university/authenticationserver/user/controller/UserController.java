@@ -50,6 +50,15 @@ public class UserController {
         return ResponseEntity.ok(getUserDTO);
     }
 
+
+    @PreAuthorize("hasAuthority('USER')")
+    @GetMapping("/auth/info")
+    public ResponseEntity<GetUserDTO> getAuthUser() {
+        GetUserDTO authUser = userService.getAuthUser(); // return or throw
+        return ResponseEntity.ok(authUser);
+    }
+
+
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping("{user-id}")
     public ResponseEntity<String> updateUser(
