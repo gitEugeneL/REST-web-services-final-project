@@ -2,7 +2,6 @@ package pl.university.applicationserver.auction.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.bson.types.Decimal128;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ public class GetAuctionDTO {
     private String sellerName;
 
     private String status;
-    private Map<String, Decimal128> participation;
+    private Map<String, BigDecimal> participation;
 
     private String name;
     private String description;

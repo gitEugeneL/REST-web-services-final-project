@@ -24,7 +24,7 @@ public class AuctionLot {
     private String buyer_email;
 
     private Status status;
-    private Map<String, Decimal128> participation;
+    private Map<String, BigDecimal> participation;
 
     private String name;
     private String description;

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.university.applicationserver.auction.document.AuctionLot;
 import pl.university.applicationserver.auction.document.Status;
 import pl.university.applicationserver.auction.dto.CreateAuctionDTO;
+import pl.university.applicationserver.auction.dto.CreateBetDTO;
 import pl.university.applicationserver.auction.dto.GetAuctionDTO;
 import pl.university.applicationserver.auction.dto.UpdateAuctionDTO;
 import pl.university.applicationserver.auction.exception.ApiRequestException;
@@ -12,8 +13,7 @@ import pl.university.applicationserver.auction.repository.AuctionRepository;
 import pl.university.applicationserver.authServerIntegration.dto.GetAuthUserDTO;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -46,7 +46,7 @@ public class AuctionService {
 
     public void updateAuction(GetAuthUserDTO authUser, UpdateAuctionDTO dto, String id) {
         //--------------------------------------
-        // authUser can only update his actions.
+        // authUser can only update his auctions.
         //--------------------------------------
         auctionRepository.findById(id)
                 .map(auction -> {
@@ -62,7 +62,7 @@ public class AuctionService {
 
     public void deleteAuction(GetAuthUserDTO authUser, String id) {
         //--------------------------------------
-        // authUser can only delete his actions.
+        // authUser can only delete his auctions.
         //--------------------------------------
         AuctionLot auction = auctionRepository.findById(id)
                 .orElseThrow(() -> new ApiRequestException("Auction not found for id: " + id));
@@ -71,6 +71,42 @@ public class AuctionService {
             throw new ApiRequestException("User is not authorized to update this auction");
 
         auctionRepository.delete(auction);
+    }
+
+
+    public void createBet(CreateBetDTO dto, GetAuthUserDTO authUser) {
+        //--------------------------------------------------------------------
+        // only authUser can place a bet and cannot place a bet on his product
+        // --------------------------------------------------------------------
+        String auctionId = dto.getAuctionId();
+        String authUserId = authUser.getId();
+
+        auctionRepository.findById(auctionId)
+                .map(auctionLot -> {
+                    if(Objects.equals(auctionLot.getSeller_id(), authUserId))
+                        throw new ApiRequestException("User is trying to buy his product");
+
+                    BigDecimal authUserBet = new BigDecimal(dto.getBet());
+                    BigDecimal startingPrice = auctionLot.getStarting_price();
+                    BigDecimal maxBet = new BigDecimal(0);
+
+                    Map<String, BigDecimal> participation = auctionLot.getParticipation();
+                    if (participation == null)
+                        participation = new HashMap<>();
+                    else
+                        maxBet = Collections.max(participation.values());  // find max bet
+
+                    // authUserBet > startingPrice && authUserBet > maxBet
+                    if (authUserBet.compareTo(startingPrice) > 0 && authUserBet.compareTo(maxBet) > 0) {
+                        participation.put(authUserId, new BigDecimal(dto.getBet()));
+                        auctionLot.setParticipation(participation);
+                        return auctionRepository.save(auctionLot);
+                    }
+                    else
+                        throw new ApiRequestException("the bet is less than the current price");
+
+                })
+                .orElseThrow(() -> new ApiRequestException("Auction lot not fount for id: " + auctionId));
     }
 
 

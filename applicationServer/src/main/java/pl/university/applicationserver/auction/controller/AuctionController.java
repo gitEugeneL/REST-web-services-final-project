@@ -7,11 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.university.applicationserver.auction.dto.CreateAuctionDTO;
+import pl.university.applicationserver.auction.dto.CreateBetDTO;
 import pl.university.applicationserver.auction.dto.GetAuctionDTO;
 import pl.university.applicationserver.auction.dto.UpdateAuctionDTO;
-import pl.university.applicationserver.auction.exception.ApiRequestException;
 import pl.university.applicationserver.auction.service.AuctionService;
-import pl.university.applicationserver.auction.utils.ValidateUtils;
+import pl.university.applicationserver.auction.utils.DtoValidator;
 import pl.university.applicationserver.authServerIntegration.AuthIntegrationService;
 import pl.university.applicationserver.authServerIntegration.dto.GetAuthUserDTO;
 
@@ -25,6 +25,7 @@ public class AuctionController {
 
     private final AuctionService auctionService;
     private final AuthIntegrationService authIntegrationService;
+    private final DtoValidator dtoValidator;
 
 
     @PostMapping("/create")
@@ -35,11 +36,8 @@ public class AuctionController {
 
         // get authUser or throw
         GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
-
         // validate dto or throw
-        String validateErrors = ValidateUtils.validate(bindingResult);
-        if (validateErrors != null) throw new ApiRequestException(validateErrors);
-
+        dtoValidator.validate(bindingResult);
         // create auction or throw
         auctionService.createAuction(dto, authUser);
         return ResponseEntity.ok("Auction lot added successfully");
@@ -54,12 +52,9 @@ public class AuctionController {
 
         // get authUser or throw
         GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
-
         // validate dto or throw
-        String validateErrors = ValidateUtils.validate(bindingResult);
-        if (validateErrors != null) throw new ApiRequestException(validateErrors);
-
-        // valid dto and update auth user auction or throw
+        dtoValidator.validate(bindingResult);
+        // update auth user auction or throw
         auctionService.updateAuction(authUser, dto, id);
         return ResponseEntity.ok("Auction id: " + id + " successfully changed");
     }
@@ -78,8 +73,19 @@ public class AuctionController {
     }
 
 
+    @PostMapping("/bet")
+    public ResponseEntity<String> createBet(
+            @NonNull @RequestHeader("Authorization") String token, @RequestBody @Valid CreateBetDTO dto,
+            BindingResult bindingResult) {
 
-
+        // get authUser or throw
+        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // validate dto or throw
+        dtoValidator.validate(bindingResult);
+        // create bet or throw
+        auctionService.createBet(dto, authUser);
+        return ResponseEntity.ok("The new bet has been created successfully");
+    }
 
 
     @GetMapping
@@ -94,7 +100,4 @@ public class AuctionController {
         GetAuctionDTO getAuctionDTO = auctionService.getOneAuction(id);  // get or throw
         return ResponseEntity.ok(getAuctionDTO);
     }
-
-
-
 }
