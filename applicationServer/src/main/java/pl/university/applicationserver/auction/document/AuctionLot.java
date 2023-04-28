@@ -1,12 +1,11 @@
 package pl.university.applicationserver.auction.document;
 
 import lombok.Data;
-import org.bson.types.Decimal128;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.Map;
 
 
@@ -24,7 +23,7 @@ public class AuctionLot {
     private String buyer_email;
 
     private Status status;
-    private Map<String, BigDecimal> participation;
+    private Map<String, BigDecimal> participants;
 
     private String name;
     private String description;
@@ -32,8 +31,10 @@ public class AuctionLot {
     private BigDecimal starting_price;
     private BigDecimal current_price;
 
-    private LocalDateTime start_time;
-    private LocalDateTime end_time;
+    private Instant start_time;
+    private Instant end_time;
+
+    private String winner_id;
 
 
     public AuctionLot(String seller_id, String seller_email, String seller_name,
@@ -44,19 +45,21 @@ public class AuctionLot {
         this.seller_name = seller_name;
         this.buyer_id = null;
         this.status = Status.ACTIVE;
-        this.participation = null;
+        this.participants = null;
         this.name = name;
         this.description = description;
         this.starting_price = starting_price;
         this.current_price = null;
-        this.start_time = LocalDateTime.now();
+        this.start_time = Instant.now();
+        this.winner_id = null;
     }
 
     public void setEnd_time(String lifetime) {
         switch (lifetime) {
-            case "one-day" -> this.end_time = this.start_time.plusDays(1);
-            case "tree-days" -> this.end_time = this.start_time.plusDays(3);
-            case "one-week" -> this.end_time = this.start_time.plusWeeks(1);
+            case "test" -> this.end_time = this.start_time.plus(Duration.ofMinutes(5)); // only for test
+            case "one-day" -> this.end_time = this.start_time.plus(Duration.ofDays(1));
+            case "tree-days" -> this.end_time = this.start_time.plus(Duration.ofDays(3));
+            case "one-week" -> this.end_time = this.start_time.plus(Duration.ofDays(7));
         }
     }
 }

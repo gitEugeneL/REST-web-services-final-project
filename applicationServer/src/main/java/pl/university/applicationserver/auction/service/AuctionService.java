@@ -10,6 +10,7 @@ import pl.university.applicationserver.auction.dto.GetAuctionDTO;
 import pl.university.applicationserver.auction.dto.UpdateAuctionDTO;
 import pl.university.applicationserver.auction.exception.ApiRequestException;
 import pl.university.applicationserver.auction.repository.AuctionRepository;
+import pl.university.applicationserver.auction.sheduler.AuctionLotScheduler;
 import pl.university.applicationserver.authServerIntegration.dto.GetAuthUserDTO;
 
 import java.math.BigDecimal;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 public class AuctionService {
 
     private final AuctionRepository auctionRepository;
+    private final AuctionLotScheduler auctionLotScheduler;
+
 
     public void createAuction(CreateAuctionDTO createAuctionDTO, GetAuthUserDTO authUser) {
 
@@ -29,7 +32,6 @@ public class AuctionService {
                 createAuctionDTO.getName().trim().toLowerCase(), Status.ACTIVE).isPresent()) {
             throw new ApiRequestException("An active lot with this name already exists");
         }
-
         AuctionLot auctionLot = new AuctionLot(
                 authUser.getId(),
                 authUser.getEmail(),
@@ -39,8 +41,11 @@ public class AuctionService {
                 new BigDecimal(createAuctionDTO.getStartingPrice())
         );
         auctionLot.setEnd_time(createAuctionDTO.getLifeTime());
-
+        // insert to db
         auctionRepository.insert(auctionLot);
+        // scheduler for auction finish ---------------------------------------------
+        auctionLotScheduler.endAuction(auctionLot.getEnd_time(), auctionLot.getId());
+        // --------------------------------------------------------------------------
     }
 
 
@@ -86,11 +91,14 @@ public class AuctionService {
                     if(Objects.equals(auctionLot.getSeller_id(), authUserId))
                         throw new ApiRequestException("User is trying to buy his product");
 
+                    if (auctionLot.getStatus() != Status.ACTIVE)
+                        throw new ApiRequestException("The auction is outdated");
+
                     BigDecimal authUserBet = new BigDecimal(dto.getBet());
                     BigDecimal startingPrice = auctionLot.getStarting_price();
                     BigDecimal maxBet = new BigDecimal(0);
 
-                    Map<String, BigDecimal> participation = auctionLot.getParticipation();
+                    Map<String, BigDecimal> participation = auctionLot.getParticipants();
                     if (participation == null)
                         participation = new HashMap<>();
                     else
@@ -99,7 +107,7 @@ public class AuctionService {
                     // authUserBet > startingPrice && authUserBet > maxBet
                     if (authUserBet.compareTo(startingPrice) > 0 && authUserBet.compareTo(maxBet) > 0) {
                         participation.put(authUserId, new BigDecimal(dto.getBet()));
-                        auctionLot.setParticipation(participation);
+                        auctionLot.setParticipants(participation);
                         return auctionRepository.save(auctionLot);
                     }
                     else
@@ -127,7 +135,7 @@ public class AuctionService {
 
     private GetAuctionDTO mapToGetAuctionDTO(AuctionLot auction) {
         return new GetAuctionDTO(auction.getId(), auction.getSeller_email(), auction.getSeller_name(),
-                auction.getStatus().toString(), auction.getParticipation(), auction.getName(),
+                auction.getStatus().toString(), auction.getParticipants(), auction.getName(),
                 auction.getDescription(), auction.getStarting_price(), auction.getCurrent_price(),
                 auction.getEnd_time());
     }

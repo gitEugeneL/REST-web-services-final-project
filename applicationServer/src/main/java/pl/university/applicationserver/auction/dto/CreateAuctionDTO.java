@@ -25,6 +25,6 @@ public class CreateAuctionDTO {
 
     @NotNull
     @NotEmpty
-    @Pattern(regexp = "^(one-day|three-days|one-week)$", message = "must be one-day or tree-days or one-week")
+    @Pattern(regexp = "^(test|one-day|three-days|one-week)$", message = "must be one-day or tree-days or one-week")
     private String lifeTime;
 }

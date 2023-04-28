@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Map;
 
 
@@ -24,6 +24,6 @@ public class GetAuctionDTO {
     private BigDecimal starting_price;
     private BigDecimal current_price;
     
-    private LocalDateTime end_time;
+    private Instant end_time;
 
 }

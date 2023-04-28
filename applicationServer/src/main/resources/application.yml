@@ -18,3 +18,7 @@ spring:
       database: application_server
       authentication-database: admin
       auto-index-creation: true
+
+
+  jackson:
+    time-zone=UTC:
