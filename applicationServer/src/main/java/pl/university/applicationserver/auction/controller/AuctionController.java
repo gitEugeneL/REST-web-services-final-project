@@ -89,15 +89,22 @@ public class AuctionController {
 
 
     @GetMapping
-    public ResponseEntity<List<GetAuctionDTO>> getAuctions() {
-        List<GetAuctionDTO> getAuctionDTOs = auctionService.getAuctions();
+    public ResponseEntity<List<GetAuctionDTO>> getAuctions(@NonNull @RequestHeader("Authorization") String token) {
+        // get authUser or throw
+        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // get auctionDto list
+        List<GetAuctionDTO> getAuctionDTOs = auctionService.getAuctions(authUser);
         return ResponseEntity.ok(getAuctionDTOs);
     }
 
 
     @GetMapping("{auction-id}")
-    public ResponseEntity<GetAuctionDTO> getOneAuction(@PathVariable("auction-id") String id) {
-        GetAuctionDTO getAuctionDTO = auctionService.getOneAuction(id);  // get or throw
+    public ResponseEntity<GetAuctionDTO> getOneAuction(@PathVariable("auction-id") String id,
+                                                       @NonNull @RequestHeader("Authorization") String token) {
+        // get authUser or throw
+        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // get auctionDto or throw
+        GetAuctionDTO getAuctionDTO = auctionService.getOneAuction(id, authUser);
         return ResponseEntity.ok(getAuctionDTO);
     }
 }

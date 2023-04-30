@@ -26,4 +26,5 @@ public class GetAuctionDTO {
     
     private Instant end_time;
 
+    private boolean readyForPayment;
 }

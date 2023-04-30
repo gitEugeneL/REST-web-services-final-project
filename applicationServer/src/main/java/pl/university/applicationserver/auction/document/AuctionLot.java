@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.*;
+import java.util.Collections;
 import java.util.Map;
 
 
@@ -60,6 +61,14 @@ public class AuctionLot {
             case "one-day" -> this.end_time = this.start_time.plus(Duration.ofDays(1));
             case "tree-days" -> this.end_time = this.start_time.plus(Duration.ofDays(3));
             case "one-week" -> this.end_time = this.start_time.plus(Duration.ofDays(7));
+        }
+    }
+
+    public BigDecimal getCurrent_price() {
+        if (participants != null && !participants.isEmpty()) {
+            return Collections.max(participants.values());
+        } else {
+            return starting_price;
         }
     }
 }

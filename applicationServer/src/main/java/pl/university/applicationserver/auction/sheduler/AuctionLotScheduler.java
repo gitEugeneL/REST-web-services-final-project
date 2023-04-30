@@ -27,7 +27,7 @@ public class AuctionLotScheduler {
     public void endAuction(Instant endTime, String auctionId) {
         taskScheduler.schedule(() -> {
             AuctionLot auctionLot = auctionRepository.findById(auctionId)
-                    .orElseThrow(() -> new RuntimeException("find end auction error"));
+                    .orElseThrow(() -> new RuntimeException("auction error"));
 
             Map<String, BigDecimal> participants = auctionLot.getParticipants();
 

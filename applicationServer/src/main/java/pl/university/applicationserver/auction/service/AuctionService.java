@@ -118,25 +118,47 @@ public class AuctionService {
     }
 
 
-    public List<GetAuctionDTO> getAuctions() {
+    public List<GetAuctionDTO> getAuctions(GetAuthUserDTO authUser) {
+        //--------------
+        // only authUser
+        // -------------
+        String authUserId = authUser.getId();
+
         return auctionRepository.findAll()
                 .stream()
-                .map(this::mapToGetAuctionDTO)
+                .map(auction -> mapAuctionToDTO(auction, authUserId))
                 .collect(Collectors.toList());
     }
 
 
-    public GetAuctionDTO getOneAuction(String id) {
+    public GetAuctionDTO getOneAuction(String id, GetAuthUserDTO authUser) {
+        //--------------
+        // only authUser
+        // -------------
+        String authUserId = authUser.getId();
+
         return auctionRepository.findById(id)
-                .map(this::mapToGetAuctionDTO)
-                .orElseThrow(() -> new ApiRequestException("Auction lot not found for id: " + id));
+                .map(auction -> mapAuctionToDTO(auction, authUserId))
+                .orElseThrow(() -> new ApiRequestException("Auction not found for id: " + id));
     }
 
 
-    private GetAuctionDTO mapToGetAuctionDTO(AuctionLot auction) {
-        return new GetAuctionDTO(auction.getId(), auction.getSeller_email(), auction.getSeller_name(),
-                auction.getStatus().toString(), auction.getParticipants(), auction.getName(),
-                auction.getDescription(), auction.getStarting_price(), auction.getCurrent_price(),
-                auction.getEnd_time());
+    private GetAuctionDTO mapAuctionToDTO(AuctionLot auction, String authUserId) {
+        boolean readyForPayment =
+                auction.getStatus() == Status.FINISHED && Objects.equals(auction.getWinner_id(), authUserId);
+
+        return new GetAuctionDTO(
+                auction.getId(),
+                auction.getSeller_email(),
+                auction.getSeller_name(),
+                auction.getStatus().toString(),
+                auction.getParticipants(),   // todo delete id users and add names
+                auction.getName(),
+                auction.getDescription(),
+                auction.getStarting_price(),
+                auction.getCurrent_price(),
+                auction.getEnd_time(),
+                readyForPayment
+        );
     }
 }
