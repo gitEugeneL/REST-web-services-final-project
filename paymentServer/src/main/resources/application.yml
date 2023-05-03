@@ -1,0 +1,13 @@
+#  Attention!
+#  Available only for demonstration, real parameters must be private!
+#-----------
+server:
+  port: 8082
+
+#  Attention!
+#  Available only for demonstration, real parameters must be private!
+#-----------
+stripe:
+  apiKey: sk_test_51N2YraDWZ6kjjkQ2WXMIRSz0N2u4jBCwTlhxvYRcNFKhnTMEdMnbuekvndC6jYGYjGZUGLcKeJoXoCQlvcEWLB0s00QgVkMih2
+  webhook:
+    secret: whsec_17e04f51aa4f14737a593815d18df98bb45463e810769eed38b446c7cf24ba39

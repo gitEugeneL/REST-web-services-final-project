@@ -144,8 +144,10 @@ public class AuctionService {
 
 
     private GetAuctionDTO mapAuctionToDTO(AuctionLot auction, String authUserId) {
+        // todo -----------------------
         boolean readyForPayment =
                 auction.getStatus() == Status.FINISHED && Objects.equals(auction.getWinner_id(), authUserId);
+        // todo -----------------------
 
         return new GetAuctionDTO(
                 auction.getId(),
@@ -158,7 +160,7 @@ public class AuctionService {
                 auction.getStarting_price(),
                 auction.getCurrent_price(),
                 auction.getEnd_time(),
-                readyForPayment
+                auction.getWinner_id()
         );
     }
 }

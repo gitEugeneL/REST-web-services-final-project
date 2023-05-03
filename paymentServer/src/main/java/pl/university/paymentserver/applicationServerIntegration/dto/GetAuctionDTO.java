@@ -1,4 +1,4 @@
-package pl.university.applicationserver.auction.dto;
+package pl.university.paymentserver.applicationServerIntegration.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,8 +23,10 @@ public class GetAuctionDTO {
 
     private BigDecimal starting_price;
     private BigDecimal current_price;
-    
+
     private Instant end_time;
 
     private String winnerId;
+
+    public GetAuctionDTO() {}
 }
