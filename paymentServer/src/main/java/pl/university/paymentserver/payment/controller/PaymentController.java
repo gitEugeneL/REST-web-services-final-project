@@ -9,11 +9,14 @@ import pl.university.paymentserver.applicationServerIntegration.ApplicationInteg
 import pl.university.paymentserver.applicationServerIntegration.dto.GetAuctionDTO;
 import pl.university.paymentserver.authServerIntegration.AuthIntegrationService;
 import pl.university.paymentserver.authServerIntegration.dto.GetAuthUserDTO;
+import pl.university.paymentserver.payment.document.PaidAuction;
 import pl.university.paymentserver.payment.service.PaymentService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @RestController
@@ -43,11 +46,20 @@ public class PaymentController {
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhook(
             @RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
-
         // check payment
         paymentService.handleWebhook(payload, sigHeader);
 
         return ResponseEntity.ok().build();
+    }
+
+
+    @GetMapping()
+    public ResponseEntity<List<PaidAuction>> getPaidAuction(@NonNull @RequestHeader("Authorization") String token) {
+        // get authUser or throw
+        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // get a list of purchased auctions for authorized users
+        List<PaidAuction> getPaidAuction = paymentService.getPaidAuctions(authUser);
+        return ResponseEntity.ok(getPaidAuction);
     }
 }
 

@@ -126,7 +126,7 @@ public class AuctionService {
 
         return auctionRepository.findAll()
                 .stream()
-                .map(auction -> mapAuctionToDTO(auction, authUserId))
+                .map(this::mapAuctionToDTO)
                 .collect(Collectors.toList());
     }
 
@@ -138,23 +138,19 @@ public class AuctionService {
         String authUserId = authUser.getId();
 
         return auctionRepository.findById(id)
-                .map(auction -> mapAuctionToDTO(auction, authUserId))
+                .map(this::mapAuctionToDTO)
                 .orElseThrow(() -> new ApiRequestException("Auction not found for id: " + id));
     }
 
 
-    private GetAuctionDTO mapAuctionToDTO(AuctionLot auction, String authUserId) {
-        // todo -----------------------
-        boolean readyForPayment =
-                auction.getStatus() == Status.FINISHED && Objects.equals(auction.getWinner_id(), authUserId);
-        // todo -----------------------
+    private GetAuctionDTO mapAuctionToDTO(AuctionLot auction) {
 
         return new GetAuctionDTO(
                 auction.getId(),
                 auction.getSeller_email(),
                 auction.getSeller_name(),
                 auction.getStatus().toString(),
-                auction.getParticipants(),   // todo delete id users and add names
+                auction.getParticipants(),
                 auction.getName(),
                 auction.getDescription(),
                 auction.getStarting_price(),

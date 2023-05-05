@@ -6,19 +6,29 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.university.paymentserver.applicationServerIntegration.dto.GetAuctionDTO;
 import pl.university.paymentserver.authServerIntegration.dto.GetAuthUserDTO;
 import com.stripe.model.checkout.Session;
+import pl.university.paymentserver.payment.document.PaidAuction;
+import pl.university.paymentserver.payment.exception.PaymentException;
+import pl.university.paymentserver.payment.repository.PaidAuctionRepository;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class PaymentService {
 
-    private String auctionId;
+    private final PaidAuctionRepository paidAuctionRepository;
+    private GetAuctionDTO auction;
+    private GetAuthUserDTO buyer;
+
 
     @Value("${stripe.apiKey}")
     private String stripeApiKey;
@@ -30,9 +40,10 @@ public class PaymentService {
     public String initialPayment(GetAuthUserDTO authUser, GetAuctionDTO auction) throws StripeException {
 
         if (!Objects.equals(auction.getStatus(), "FINISHED") || !Objects.equals(auction.getWinnerId(), authUser.getId())) {
-            // todo exception
+            throw new PaymentException("user id: " + authUser.getId() + " can't buy this product");
         }
-        auctionId = auction.getId();
+        this.auction = auction;
+        this.buyer = authUser;
 
         Stripe.apiKey = stripeApiKey;
         SessionCreateParams.LineItem item = SessionCreateParams.LineItem
@@ -71,15 +82,31 @@ public class PaymentService {
 
             switch (event.getType()) {
                 case "payment_intent.succeeded":
-                    // todo "payment was successful"
-                    System.out.println(auctionId); // todo PUT request to application server (edit auction status) and !!!ADD authUser token
+                    PaidAuction paidAuction = new PaidAuction(
+                            auction.getId(),
+                            buyer.getId(),
+                            auction.getName(),
+                            auction.getDescription(),
+                            auction.getCurrent_price(),
+                            true
+                    );
+                    paidAuctionRepository.insert(paidAuction);
+
                     break;
                 case "payment_intent.payment_failed":
-                    // todo "payment failed"
+                    // payment failed
+                    // --------------
                     break;
             }
         } catch (SignatureVerificationException e) {
-            // todo exception
+            throw new PaymentException("Payment signature verification error");
         }
+    }
+
+    public List<PaidAuction> getPaidAuctions(GetAuthUserDTO authUser) {
+        // list of purchased auctions for authorized users
+        return paidAuctionRepository.findByWinnerId(authUser.getId())
+                .stream()
+                .collect(Collectors.toList());
     }
 }
