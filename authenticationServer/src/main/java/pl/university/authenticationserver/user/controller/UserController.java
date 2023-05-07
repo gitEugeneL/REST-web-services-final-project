@@ -17,6 +17,7 @@ import pl.university.authenticationserver.user.utils.ValidateUtils;
 import java.util.List;
 
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/user")

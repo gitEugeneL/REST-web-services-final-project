@@ -18,6 +18,7 @@ import pl.university.applicationserver.authServerIntegration.dto.GetAuthUserDTO;
 import java.util.List;
 
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auction")

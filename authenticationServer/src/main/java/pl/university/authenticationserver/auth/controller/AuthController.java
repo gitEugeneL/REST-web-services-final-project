@@ -13,6 +13,7 @@ import pl.university.authenticationserver.auth.service.AuthService;
 import pl.university.authenticationserver.user.exceptions.ApiRequestException;
 import pl.university.authenticationserver.user.utils.ValidateUtils;
 
+@CrossOrigin
 @RestController
 @RequestMapping("api/user")
 @RequiredArgsConstructor
@@ -39,7 +40,7 @@ public class AuthController {
 
 
     @PreAuthorize("hasAuthority('USER')")
-    @PostMapping("logout")
+    @GetMapping("logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
         authService.logout(token);
         return ResponseEntity.ok("User logged out successfully");
