@@ -1,23 +1,25 @@
 <template>
-    <form @submit.prevent="handleSubmit">
-        <Error v-if="error" :error="error"/>
-        <h3>Login</h3>
-        <div class="form-group">
-            <label>Email</label>
-            <input v-model="email"
-                 type="email"
-                 class="form-control"
-                 placeholder="Email">
-        </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input v-model="password"
-                 type="password"
-                 class="form-control"
-                 placeholder="Password">
-        </div>
-        <button class="btn btn-primary btn-block">Login</button>
-    </form>
+    <div class="auth-inner">
+        <form @submit.prevent="handleSubmit">
+            <Error v-if="error" :error="error"/>
+            <h3>Login</h3>
+            <div class="form-group">
+                <label>Email</label>
+                <input v-model="email"
+                     type="email"
+                     class="form-control"
+                     placeholder="Email">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input v-model="password"
+                     type="password"
+                     class="form-control"
+                     placeholder="Password">
+            </div>
+            <button class="btn btn-primary btn-block">Login</button>
+        </form>
+    </div>
 </template>
 
 
