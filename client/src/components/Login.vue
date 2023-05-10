@@ -17,6 +17,9 @@
                      class="form-control"
                      placeholder="Password">
             </div>
+            <div class="redirect">
+                <router-link to="/register" class="text-primary">if you don't have an account</router-link>
+            </div>
             <button class="btn btn-primary btn-block">Login</button>
         </form>
     </div>
@@ -69,3 +72,11 @@
         }
     }
 </script>
+
+
+<style scoped>
+    .redirect {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+</style>
