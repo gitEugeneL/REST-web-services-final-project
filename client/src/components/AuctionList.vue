@@ -5,7 +5,8 @@
                 <div class="card">
                     <img class="card-img-top" src="https://via.placeholder.com/300x200" alt="Card image cap">
                     <div class="card-body text-center">
-                        <h5 class="card-title">{{ auction.name }}</h5>
+                        <h5 class="card-title">{{ auction.name }}
+                            <span class="your-card" v-if="auction.sellerEmail === user.email"> (Your)</span></h5>
                         <p class="card-text">End date: <span class="font-weight-bold">{{ formatDateTime(auction.end_time) }}</span></p>
                         <div class="d-flex justify-content-center">
                             <div class="card-text">
@@ -35,12 +36,17 @@ import axios from "axios";
 import AuctionDetail from "@/components/AuctionDetail.vue";
 import {APPLICATION_SERVER } from "@/config";
 import store from "@/vuex";
+import {mapGetters} from "vuex";
 
 
     export default {
         name: 'AuctionList',
 
         components: { AuctionDetail },
+
+        computed: {
+            ...mapGetters(['user'])
+        },
 
         data() {
             return {
@@ -80,5 +86,10 @@ import store from "@/vuex";
         padding: 20px;
         border-radius: 15px;
         transition: all .3s;
+        margin-bottom: 30px;
+    }
+    .your-card {
+        font-style: italic;
+        color: #ff0000;
     }
 </style>

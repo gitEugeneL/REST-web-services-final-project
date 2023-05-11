@@ -59,12 +59,6 @@ export default {
         text-align: center;
     }
 
-    .navbar-light {
-        background-color: #fff;
-        box-shadow: 0 14px 80px rgba(34, 35, 58, .2);
-        margin-bottom: 20px;
-    }
-
     .main-wrapper {
         display: flex;
         justify-content: center;
@@ -73,7 +67,7 @@ export default {
         margin-top: 100px;
     }
 
-    .auth-inner {
+    .auth-inner, .wrapper {
         width: 450px;
         margin: auto;
         background: #fff;
@@ -83,15 +77,24 @@ export default {
         transition: all .3s;
     }
 
-    .auth-wrapper .form-control:focus {
+    .auth-inner h3 {
+        text-align: center;
+    }
+
+    .form-control:focus {
         border: 2px solid #167bff;
         box-shadow: none;
     }
 
-    .auth-wrapper h3 {
+    .auth-wrapper h3, .wrapper h3 {
         text-align: center;
         margin: 0;
         line-height: 1;
         padding-bottom: 20px;
+    }
+
+    .wrapper {
+        width: 550px;
+        padding: 20px;
     }
 </style>
