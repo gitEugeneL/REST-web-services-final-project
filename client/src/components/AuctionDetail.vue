@@ -5,36 +5,49 @@
                 <img class="card-img-top" src="https://via.placeholder.com/300x200" alt="Card image cap">
             </div>
             <div class="card-body">
+                <div class="timer text-danger">{{ this.timerText }}</div>
+
                 <div class="title">
                     <h2 class="card-title mb-3">{{ auction.name }}</h2>
                     <p class="card-text mb-4">{{ auction.description }}</p>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item border-0 py-1">
-                        <span class="fw-bold me-2">Start date:</span> 10 jun 2023 year, 10:00
+                        <span class="fw-bold me-2">End date: </span>{{ formatDateTime(auction.end_time) }}
                     </li>
                     <li class="list-group-item border-0 py-1">
-                        <span class="fw-bold me-2">End date:</span> 15 jun 2023 year, 18:00
+                        <span class="fw-bold me-2">Initial price:</span> €{{ auction.starting_price }}
                     </li>
                     <li class="list-group-item border-0 py-1">
-                        <span class="fw-bold me-2">Initial price:</span> €10
+                        <span class="fw-bold me-2">Bets: </span>
+                        <span class="bid" v-for="bid in bids"> €{{ bid }}</span>
                     </li>
                     <li class="list-group-item border-0 py-1">
-                        <span class="fw-bold me-2">Bids:</span> €25, €30, €58, €99
+                        <span class="fw-bold me-2" v-if="timerText !== null">Current price: </span>
+                        <span class="fw-bold me-2" v-if="timerText === null">Final price: </span>
+                        <span class="text-danger">€{{ auction.current_price }}</span>
                     </li>
                     <li class="list-group-item border-0 py-1">
-                        <span class="fw-bold me-2 text-danger">Current price:</span> €99
-                    </li>
-                    <li class="list-group-item border-0 py-1">
-                        <form>
-                            <div class="form-group mb-0 mt-2">
-                                <label for="bid" class="fw-bold me-2">Your bid:</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" placeholder="Enter your bid">
-                                    <button type="submit" class="btn btn-danger">Place a bet</button>
-                                </div>
+                        <h5 class="text-danger" v-if="lead">{{ lead }}</h5>
+                        <div v-if="timerText === null">
+                            <h5>This auction is over</h5>
+                        </div>
+                        <div v-if="auction.sellerEmail !== user.email && timerText !== null">
+                            <Error v-if="error" :error="error"/>
+                            <form @submit.prevent="handleBetSubmit"
+                                  class="d-flex justify-content-center align-items-center">
+                                <label for="bid" class="fw-bold">Your bet: </label>
+                                <input v-model="enteredBet" type="number" class="form-control" placeholder="Enter your bet">
+                                <button type="submit" class="btn btn-danger">Place a bet</button>
+                            </form>
+                        </div>
+                        <div v-if="auction.sellerEmail === user.email && timerText !== null">
+                            <h5>This is your auction</h5>
+                            <div class="d-flex justify-content-center">
+                                <button @click="editAuctionHandler" class="btn btn-outline-primary edit-btn">Edit auction</button>
+                                <button class="btn btn-outline-danger">Delete auction</button>
                             </div>
-                        </form>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -47,27 +60,116 @@
     import {mapGetters} from "vuex";
     import axios from "axios";
     import {APPLICATION_SERVER} from "@/config";
+    import Error from "@/components/Error.vue";
+    import store from "@/vuex";
+    import router from "@/router";
 
     export default {
         name: 'AuctionDetail',
+        components: {Error},
 
         computed: {
-            ...mapGetters(['auctionId'])
+            ...mapGetters(['auctionId', 'user']),
         },
 
         data() {
             return {
-                auction: null
+                auction: null,
+                bids: null,
+
+                countdown: '',
+                timerText: '',
+
+                error: null,
+                enteredBet: '',
+
+                lead: ''
             }
         },
 
         async created() {
-            const token = localStorage.getItem('token');
-            if (token) {
-                const response = await axios.get(`${APPLICATION_SERVER}/api/auction/${this.auctionId}`, {
-                    headers: { Authorization: 'Bearer ' + token }
-                });
-                this.auction = response.data;
+            await this.getAuctionData();
+            this.countdown = setInterval(() => {
+                this.getAuctionData();
+                this.timerLogic();
+            }, 1000);
+        },
+
+
+        methods: {
+            async getAuctionData() {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    const response = await axios.get(`${APPLICATION_SERVER}/api/auction/${this.auctionId}`, {
+                        headers: {Authorization: 'Bearer ' + token}
+                    });
+                    this.auction = response.data;
+                    if(this.auction.participation) {
+                        this.bids = Object.values(this.auction.participation).sort((a, b) => a - b);
+
+                    }
+                    const entries = Object.entries(this.auction.participation);
+                    const maxEntry = entries.reduce((prev, current) => prev[1] > current[1] ? prev : current);
+                    if (this.user) {
+                        if (maxEntry[0] === this.user.id) {
+                            this.lead = `Your bet is in the lead: €${maxEntry[1]}`
+                        } else {
+                            this.lead = '';
+                        }
+                    }
+
+                }
+            },
+
+            async handleBetSubmit() {
+                try {
+                    const data = {
+                        auctionId: this.auction.id,
+                        bet: this.enteredBet
+                    }
+                    const response = await axios.post(`${APPLICATION_SERVER}/api/auction/bet`, data, {
+                        headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
+                    })
+
+                    if (response.status === 200) {
+                        this.error = null;
+                        this.enteredBet = '';
+                        await this.getAuctionData();
+                    }
+                } catch (e) {
+                    this.error = e.response.data.message;
+                }
+            },
+
+            formatDateTime(dateTimeStr) {
+                const date = new Date(dateTimeStr);
+                const options = {
+                    year: 'numeric', month: 'short', day: 'numeric',
+                    hour: 'numeric', minute: 'numeric', hour12: false
+                };
+                return date.toLocaleString('en-EN', options);
+            },
+
+            timerLogic() {
+                const distance = new Date(this.auction.end_time) - new Date();
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                if (distance < 0) {
+                    clearInterval(this.countdown);
+                    this.countdown = null;
+                    this.timerText = null;
+                    this.getAuctionData();
+                } else {
+                    this.timerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                }
+            },
+
+            async editAuctionHandler() {
+                await store.dispatch('auction', this.auction);
+                await router.push('/auction-edit');
             }
         }
     }
@@ -81,5 +183,45 @@
 
     .title {
         text-align: center;
+    }
+
+    .bid {
+        margin-right: 4px;
+        font-weight: normal;
+    }
+
+    .bid span {
+        margin-left: 15px;
+        color: grey;
+    }
+
+    .timer {
+        height: 25px;
+        text-align: right;
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        margin-right: 20px;
+        width: 200px;
+    }
+
+    label {
+        margin: 0 20px 0 0;
+    }
+
+    form {
+        padding-top: 10px;
+    }
+
+    .edit-btn {
+        margin-right: 20px;
+    }
+
+    h5 {
+        text-align: center;
+        margin-bottom: 10px;
+        margin-top: 10px;
     }
 </style>

@@ -6,15 +6,17 @@ import AuctionList from "@/components/AuctionList.vue";
 import AuctionDetail from "@/components/AuctionDetail.vue"
 import CreateAuction from "@/components/CreateAuction.vue";
 import EditUser from "@/components/EditUser.vue"
+import EditAuction from "@/components/EditAuction.vue";
 
 const routes = [
     { path: '/login', component: Login },
     { path: '/register', component: Register },
     { path: '/', component: AuctionList },
     { path: '/auction-detail', component: AuctionDetail },
+    { path: '/create-auction', component: CreateAuction },
+    { path: '/auction-edit', component: EditAuction },
     { path: '/user', component: User },
     { path: '/user-edit', component: EditUser },
-    { path: '/create-auction', component: CreateAuction }
 ]
 
 const router = createRouter({
