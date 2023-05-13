@@ -29,10 +29,10 @@
                     </li>
                     <li class="list-group-item border-0 py-1">
                         <h5 class="text-danger" v-if="lead">{{ lead }}</h5>
-                        <div v-if="timerText === null">
+                        <div v-if="auction.status !== 'ACTIVE'">
                             <h5>This auction is over</h5>
                         </div>
-                        <div v-if="auction.sellerEmail !== user.email && timerText !== null">
+                        <div v-if="auction.sellerEmail !== user.email && auction.status === 'ACTIVE'">
                             <Error v-if="error" :error="error"/>
                             <form @submit.prevent="handleBetSubmit"
                                   class="d-flex justify-content-center align-items-center">
@@ -41,12 +41,28 @@
                                 <button type="submit" class="btn btn-danger">Place a bet</button>
                             </form>
                         </div>
-                        <div v-if="auction.sellerEmail === user.email && timerText !== null">
+                        <div v-if="auction.sellerEmail === user.email && auction.status === 'ACTIVE'">
                             <h5>This is your auction</h5>
                             <div class="d-flex justify-content-center">
                                 <button @click="editAuctionHandler" class="btn btn-outline-primary edit-btn">Edit auction</button>
                                 <button class="btn btn-outline-danger">Delete auction</button>
                             </div>
+                        </div>
+                        <div v-if="auction.sellerEmail !== user.email && auction.status === 'FINISHED' && auction.winnerId === user.id">
+                            <h5 class="text-success">Congratulations you are the winner !!!</h5>
+                            <div class="d-flex justify-content-center">
+                                <Pay :auctionId="auction.id"/>
+<!--                                <button class="btn btn-outline-danger">Pay</button>-->
+                            </div>
+                        </div>
+                        <div v-if="auction.status === 'FAILED'">
+                            <h5 class="text-success">The auction ended. There are no participants :(</h5>
+                        </div>
+                        <div v-if="auction.status === 'FINISHED' && auction.sellerEmail === user.email">
+                            <h5 class="text-danger">The winner hasn't paid yet</h5>
+                        </div>
+                        <div v-if="auction.status === 'PAID' && auction.sellerEmail === user.email">
+                            <h5 class="text-success">The winner paid</h5>
                         </div>
                     </li>
                 </ul>
@@ -63,10 +79,11 @@
     import Error from "@/components/Error.vue";
     import store from "@/vuex";
     import router from "@/router";
+    import Pay from "@/components/Pay.vue";
 
     export default {
         name: 'AuctionDetail',
-        components: {Error},
+        components: {Pay, Error},
 
         computed: {
             ...mapGetters(['auctionId', 'user']),
@@ -104,20 +121,19 @@
                         headers: {Authorization: 'Bearer ' + token}
                     });
                     this.auction = response.data;
-                    if(this.auction.participation) {
+                    if(this.auction.participation !== null) {
                         this.bids = Object.values(this.auction.participation).sort((a, b) => a - b);
 
-                    }
-                    const entries = Object.entries(this.auction.participation);
-                    const maxEntry = entries.reduce((prev, current) => prev[1] > current[1] ? prev : current);
-                    if (this.user) {
-                        if (maxEntry[0] === this.user.id) {
-                            this.lead = `Your bet is in the lead: €${maxEntry[1]}`
-                        } else {
-                            this.lead = '';
+                        const entries = Object.entries(this.auction.participation);
+                        const maxEntry = entries.reduce((prev, current) => prev[1] > current[1] ? prev : current);
+                        if (this.user) {
+                            if (maxEntry[0] === this.user.id && this.auction.status === 'ACTIVE') {
+                                this.lead = `Your bet is in the lead: €${maxEntry[1]}`
+                            } else {
+                                this.lead = '';
+                            }
                         }
                     }
-
                 }
             },
 
