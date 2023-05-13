@@ -39,4 +39,27 @@ public class ApplicationIntegrationService {
             throw new AuctionIntegrationServerException("Auction integration exception");
         }
     }
+
+
+    public void updateAuctionStatus(String token, String id) {
+        if (token.startsWith("Bearer "))
+            token = token.substring(7);
+        else
+            throw new AuctionIntegrationServerException("token is not valid");
+
+        String url = APPLICATIOPN_SERVER_CONNECTION_STRING + "/paid/" + id;
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<Void> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
+            if (responseEntity.getStatusCode() != HttpStatus.OK) {
+                throw new AuctionIntegrationServerException("Auction integration exception");
+            }
+        } catch (RestClientException e) {
+            throw new AuctionIntegrationServerException("Auction integration exception");
+        }
+    }
 }

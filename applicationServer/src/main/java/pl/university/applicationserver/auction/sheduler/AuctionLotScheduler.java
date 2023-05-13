@@ -37,7 +37,7 @@ public class AuctionLotScheduler {
                 String maxBetUserId = participants.entrySet().stream().max(Map.Entry.comparingByValue())
                         .map(Map.Entry::getKey).orElse(null);
                 if (maxBetUserId != null) {
-                    auctionLot.setWinner_id(maxBetUserId);
+                    auctionLot.setWinnerId(maxBetUserId);
                     auctionLot.setStatus(Status.FINISHED);
                 } else {
                     auctionLot.setStatus(Status.FAIlLED);

@@ -9,6 +9,7 @@ import com.stripe.param.checkout.SessionCreateParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import pl.university.paymentserver.applicationServerIntegration.ApplicationIntegrationService;
 import pl.university.paymentserver.applicationServerIntegration.dto.GetAuctionDTO;
 import pl.university.paymentserver.authServerIntegration.dto.GetAuthUserDTO;
 import com.stripe.model.checkout.Session;
@@ -26,8 +27,10 @@ import java.util.stream.Collectors;
 public class PaymentService {
 
     private final PaidAuctionRepository paidAuctionRepository;
+    private final ApplicationIntegrationService applicationIntegrationService;
     private GetAuctionDTO auction;
     private GetAuthUserDTO buyer;
+    private String token;
 
 
     @Value("${stripe.apiKey}")
@@ -37,13 +40,14 @@ public class PaymentService {
     private String webhookSecret;
 
 
-    public String initialPayment(GetAuthUserDTO authUser, GetAuctionDTO auction) throws StripeException {
+    public String initialPayment(GetAuthUserDTO authUser, GetAuctionDTO auction, String token) throws StripeException {
 
         if (!Objects.equals(auction.getStatus(), "FINISHED") || !Objects.equals(auction.getWinnerId(), authUser.getId())) {
             throw new PaymentException("user id: " + authUser.getId() + " can't buy this product");
         }
         this.auction = auction;
         this.buyer = authUser;
+        this.token = token;
 
         Stripe.apiKey = stripeApiKey;
         SessionCreateParams.LineItem item = SessionCreateParams.LineItem
@@ -52,7 +56,7 @@ public class PaymentService {
                         SessionCreateParams.LineItem.PriceData
                                 .builder()
                                 .setCurrency("pln")
-                                .setUnitAmount(auction.getCurrent_price().longValue())
+                                .setUnitAmount(auction.getCurrent_price().longValue() * 100)
                                 .setProductData(
                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                 .setName(auction.getName())
@@ -67,8 +71,8 @@ public class PaymentService {
         return Session.create(
                 SessionCreateParams.builder()
                         .addLineItem(item)
-                        .setSuccessUrl("http://localhost:8083/success") // todo add client port and page
-                        .setCancelUrl("http://localhost:8083/cancel") // // todo add client port and page
+                        .setSuccessUrl("http://localhost:3000/success") // todo add client port and page
+                        .setCancelUrl("http://localhost:3000/cancel") // // todo add client port and page
                         .setMode(SessionCreateParams.Mode.PAYMENT)
                         .build()
 
@@ -90,8 +94,10 @@ public class PaymentService {
                             auction.getCurrent_price(),
                             true
                     );
-                    paidAuctionRepository.insert(paidAuction);
+                    // update auction status
+                    applicationIntegrationService.updateAuctionStatus(this.token, this.auction.getId());
 
+                    paidAuctionRepository.insert(paidAuction);
                     break;
                 case "payment_intent.payment_failed":
                     // payment failed

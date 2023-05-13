@@ -40,7 +40,8 @@ public class AuctionService {
                 createAuctionDTO.getDescription().trim(),
                 new BigDecimal(createAuctionDTO.getStartingPrice())
         );
-        auctionLot.setEnd_time(createAuctionDTO.getLifeTime());
+
+        auctionLot.setEndTime(createAuctionDTO.getLifeTime());
         // insert to db
         auctionRepository.insert(auctionLot);
         // scheduler for auction finish ---------------------------------------------
@@ -55,13 +56,29 @@ public class AuctionService {
         //--------------------------------------
         auctionRepository.findById(id)
                 .map(auction -> {
-                    if(!Objects.equals(authUser.getId(), auction.getSeller_id())) {
+                    if(!Objects.equals(authUser.getId(), auction.getSellerId())) {
                         throw new ApiRequestException("User is not authorized to update this auction");
                     }
                     auction.setDescription(dto.getDescription().trim());
                     return auctionRepository.save(auction);
                 })
                 .orElseThrow(() -> new ApiRequestException("Auction not found for id: " + id));
+    }
+
+
+    public void updateAuctionStatus(GetAuthUserDTO authUser, String auctionId) {
+        //--------------------------------------
+        // authUser can only update his auctions.
+        //--------------------------------------
+        auctionRepository.findById(auctionId)
+                .map(auction -> {
+                    if(auction.getStatus() == Status.FINISHED && Objects.equals(auction.getWinnerId(), authUser.getId())) {
+                        auction.setStatus(Status.PAID);
+                        return auctionRepository.save(auction);
+                    } else {
+                        throw new ApiRequestException("You can't pay for this auction");
+                    }
+                }).orElseThrow(() -> new ApiRequestException("A suitable auction was not found"));
     }
 
 
@@ -72,7 +89,7 @@ public class AuctionService {
         AuctionLot auction = auctionRepository.findById(id)
                 .orElseThrow(() -> new ApiRequestException("Auction not found for id: " + id));
 
-        if(!Objects.equals(authUser.getId(), auction.getSeller_id()))
+        if(!Objects.equals(authUser.getId(), auction.getSellerId()))
             throw new ApiRequestException("User is not authorized to update this auction");
 
         auctionRepository.delete(auction);
@@ -88,7 +105,7 @@ public class AuctionService {
 
         auctionRepository.findById(auctionId)
                 .map(auctionLot -> {
-                    if(Objects.equals(auctionLot.getSeller_id(), authUserId))
+                    if(Objects.equals(auctionLot.getSellerId(), authUserId))
                         throw new ApiRequestException("User is trying to buy his product");
 
                     if (auctionLot.getStatus() != Status.ACTIVE)
@@ -112,31 +129,54 @@ public class AuctionService {
                     }
                     else
                         throw new ApiRequestException("the bet is less than the current price");
-
                 })
                 .orElseThrow(() -> new ApiRequestException("Auction lot not fount for id: " + auctionId));
     }
 
 
-    public List<GetAuctionDTO> getAuctions(GetAuthUserDTO authUser) {
-        //--------------
-        // only authUser
-        // -------------
-        String authUserId = authUser.getId();
-
-        return auctionRepository.findAll()
+    public List<GetAuctionDTO> getAuctions() {
+        return auctionRepository.findByStatus(Status.ACTIVE)
                 .stream()
                 .map(this::mapAuctionToDTO)
                 .collect(Collectors.toList());
     }
 
 
-    public GetAuctionDTO getOneAuction(String id, GetAuthUserDTO authUser) {
-        //--------------
-        // only authUser
-        // -------------
-        String authUserId = authUser.getId();
+    public List<GetAuctionDTO> getAuthUserAuctions(GetAuthUserDTO authUser) {
+        return auctionRepository.findBySellerId(authUser.getId())
+                .stream()
+                .map(this::mapAuctionToDTO)
+                .collect(Collectors.toList());
+    }
 
+
+    public List<GetAuctionDTO> getAuthParticipantAuctions(GetAuthUserDTO authUser) {
+        return auctionRepository.findByStatus(Status.ACTIVE)
+                .stream()
+                .filter(auctionLot -> auctionLot.getParticipants() != null)
+                .filter(auctionLot -> auctionLot.getParticipants().containsKey(authUser.getId()))
+                .map(this::mapAuctionToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    public List<GetAuctionDTO> getAuthWinnerAuctions(GetAuthUserDTO authUser) {
+        return auctionRepository.findByWinnerIdAndStatus(authUser.getId(), Status.FINISHED)
+                .stream()
+                .map(this::mapAuctionToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    public List<GetAuctionDTO> getAuthPurchasedAuctions(GetAuthUserDTO authUser) {
+        return auctionRepository.findByWinnerIdAndStatus(authUser.getId(), Status.PAID)
+                .stream()
+                .map(this::mapAuctionToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    public GetAuctionDTO getOneAuction(String id) {
         return auctionRepository.findById(id)
                 .map(this::mapAuctionToDTO)
                 .orElseThrow(() -> new ApiRequestException("Auction not found for id: " + id));
@@ -156,7 +196,7 @@ public class AuctionService {
                 auction.getStarting_price(),
                 auction.getCurrent_price(),
                 auction.getEnd_time(),
-                auction.getWinner_id()
+                auction.getWinnerId()
         );
     }
 }

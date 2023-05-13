@@ -34,7 +34,6 @@ public class AuctionController {
             @NonNull @RequestHeader("Authorization") String token,
             @RequestBody @Valid CreateAuctionDTO dto,
             BindingResult bindingResult) {
-
         // get authUser or throw
         GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
         // validate dto or throw
@@ -50,13 +49,24 @@ public class AuctionController {
             @NonNull @RequestHeader("Authorization") String token,
             @PathVariable("auction-id") String id,
             @RequestBody @Valid UpdateAuctionDTO dto, BindingResult bindingResult) {
-
         // get authUser or throw
         GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
         // validate dto or throw
         dtoValidator.validate(bindingResult);
         // update auth user auction or throw
         auctionService.updateAuction(authUser, dto, id);
+        return ResponseEntity.ok("Auction id: " + id + " successfully changed");
+    }
+
+
+    @PutMapping("/paid/{auction-id}")
+    public ResponseEntity<String> updateAuctionStatus(
+            @NonNull @RequestHeader("Authorization") String token,
+            @PathVariable("auction-id") String id) {
+        // get authUser or throw
+        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // update paid auction or throw
+        auctionService.updateAuctionStatus(authUser, id);
         return ResponseEntity.ok("Auction id: " + id + " successfully changed");
     }
 
@@ -91,21 +101,61 @@ public class AuctionController {
 
     @GetMapping
     public ResponseEntity<List<GetAuctionDTO>> getAuctions(@NonNull @RequestHeader("Authorization") String token) {
-        // get authUser or throw
-        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // validate token or throw
+        authIntegrationService.getAuthUser(token);
         // get auctionDto list
-        List<GetAuctionDTO> getAuctionDTOs = auctionService.getAuctions(authUser);
+        List<GetAuctionDTO> getAuctionDTOs = auctionService.getAuctions();
         return ResponseEntity.ok(getAuctionDTOs);
+    }
+
+    @GetMapping("auth-user-auctions")
+    public ResponseEntity<List<GetAuctionDTO>> getAuthUserAuctions(@NonNull @RequestHeader("Authorization") String token) {
+        // validate token or throw
+        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // get auth user auctions list
+        List<GetAuctionDTO> getAuctionDTOS = auctionService.getAuthUserAuctions(authUser);
+        return ResponseEntity.ok(getAuctionDTOS);
+    }
+
+
+    @GetMapping("auth-participant-auctions")
+    public ResponseEntity<List<GetAuctionDTO>> getAuthParticipantAuctions(@NonNull @RequestHeader("Authorization") String token) {
+        // validate token or throw
+        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // get auth participant auctions list
+        List<GetAuctionDTO> getAuctionDTOS = auctionService.getAuthParticipantAuctions(authUser);
+        return ResponseEntity.ok(getAuctionDTOS);
+    }
+
+
+    @GetMapping("auth-purchased-auctions")
+    public ResponseEntity<List<GetAuctionDTO>> getAuthPurchasedAuctions(@NonNull @RequestHeader("Authorization") String token) {
+        // validate token or throw
+        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // get auth purchased auctions list
+        List<GetAuctionDTO> getAuctionDTOS = auctionService.getAuthPurchasedAuctions(authUser);
+        return ResponseEntity.ok(getAuctionDTOS);
+    }
+
+
+
+    @GetMapping("auth-winner-auctions")
+    public ResponseEntity<List<GetAuctionDTO>> getAuthWinnerAuctions(@NonNull @RequestHeader("Authorization") String token) {
+        // validate token or throw
+        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // get auth participant auctions list
+        List<GetAuctionDTO> getAuctionDTOS = auctionService.getAuthWinnerAuctions(authUser);
+        return ResponseEntity.ok(getAuctionDTOS);
     }
 
 
     @GetMapping("{auction-id}")
     public ResponseEntity<GetAuctionDTO> getOneAuction(@PathVariable("auction-id") String id,
                                                        @NonNull @RequestHeader("Authorization") String token) {
-        // get authUser or throw
-        GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
+        // validate token or throw
+        authIntegrationService.getAuthUser(token);
         // get auctionDto or throw
-        GetAuctionDTO getAuctionDTO = auctionService.getOneAuction(id, authUser);
+        GetAuctionDTO getAuctionDTO = auctionService.getOneAuction(id);
         return ResponseEntity.ok(getAuctionDTO);
     }
 }

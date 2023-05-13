@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/payment")
@@ -37,7 +38,7 @@ public class PaymentController {
         // get finished auction in which the authUser won or throw
         GetAuctionDTO auction = applicationIntegrationService.getAuction(token, auctionId);
         // get payment url or throw
-        String paymentUrl = paymentService.initialPayment(authUser, auction);
+        String paymentUrl = paymentService.initialPayment(authUser, auction, token);
 
         return ResponseEntity.ok(paymentUrl);
     }
