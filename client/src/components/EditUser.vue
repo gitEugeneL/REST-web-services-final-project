@@ -62,7 +62,6 @@ export default {
                     firstName: this.firstName,
                     lastName: this.lastName
                 }
-                const token = localStorage.getItem('token');
                 const response = await axios.put(`${AUTH_SERVER}/api/user/${this.id}`, data, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });

@@ -7,11 +7,11 @@
 
 <script>
 import AuctionsListCard from "@/components/AuctionsListCard.vue";
-import axios from "axios";
 import {APPLICATION_SERVER} from "@/config";
+import axios from "axios";
 
 export default {
-    name: "UserAuctionsList",
+    name: "UserSoldProducts",
 
     components: { AuctionsListCard },
 
@@ -26,14 +26,16 @@ export default {
         const response = await axios.get(`${APPLICATION_SERVER}/api/auction/auth-user-auctions`, {
             headers: { Authorization: 'Bearer ' + token }
         });
-        this.auctions = response.data.filter(auction => auction.status === 'ACTIVE');
+        this.auctions = response.data.filter(auction => auction.status === 'PAID');
     }
+
 }
 </script>
 
+
 <style scoped>
-    h4 {
-        width: fit-content;
-        margin: auto auto 30px;
-    }
+h4 {
+    width: fit-content;
+    margin: auto auto 30px;
+}
 </style>

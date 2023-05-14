@@ -10,17 +10,18 @@
                 </div>
                 <div class="d-flex justify-content-end mb-4">
                     <button  @click="editHandler" class="btn btn-outline-primary">Edit your account</button>
-                    <button class="btn btn-danger logout">Logout</button>
                 </div>
             </div>
         </div>
         <div class="card shadow auction-block">
             <h3 class="mb-3">Auction actions</h3>
             <div class="d-flex justify-content-between">
-                <button class="btn btn-outline-primary">Your auctions</button>
-                <button class="btn btn-outline-primary">You're a participant</button>
-                <button class="btn btn-outline-danger">Auctions won</button>
-                <button class="btn btn-outline-success">Purchased auctions</button>
+                <router-link to="/my-auctions" class="btn btn-outline-primary">My auctions</router-link>
+                <router-link to="/im-participant" class="btn btn-outline-primary">I'm participate</router-link>
+                <router-link to="/im-winner" class="btn btn-outline-danger">I'm winner</router-link>
+                <router-link to="/my-purchased-auctions" class="btn btn-outline-success">Purchased auctions</router-link>
+                <router-link to="/my-sold-products" class="btn btn-outline-success">My sold products</router-link>
+
             </div>
         </div>
     </div>
@@ -30,6 +31,7 @@
 <script>
 import { mapGetters } from "vuex";
 import router from "@/router";
+
 
 export default {
     name: 'User',
@@ -50,7 +52,7 @@ export default {
 <style scoped>
     .wrapper {
         padding: 40px;
-        width: 750px;
+        width: 800px;
     }
 
     .auction-block {

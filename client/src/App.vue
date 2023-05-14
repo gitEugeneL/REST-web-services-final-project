@@ -97,4 +97,8 @@ export default {
         width: 550px;
         padding: 20px;
     }
+
+    textarea {
+        min-height: 120px;
+    }
 </style>

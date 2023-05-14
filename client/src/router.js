@@ -11,6 +11,7 @@ import UserAuctionsList from "@/components/UserAuctionsList.vue";
 import UserParticipateAuctionList from "@/components/UserParticipateAuctionList.vue";
 import UserWinnerAuctionList from "@/components/UserWinnerAuctionList.vue";
 import UserPurchasedAuctions from "@/components/UserPurchasedAuctions.vue";
+import UserSoldProducts from "@/components/UserSoldProducts.vue";
 
 const routes = [
     { path: '/login', component: Login },
@@ -20,6 +21,7 @@ const routes = [
     { path: '/im-participant', component: UserParticipateAuctionList },
     { path: '/im-winner', component: UserWinnerAuctionList },
     { path: '/my-purchased-auctions', component: UserPurchasedAuctions },
+    { path: '/my-sold-products', component: UserSoldProducts },
     { path: '/auction-detail', component: AuctionDetail },
     { path: '/create-auction', component: CreateAuction },
     { path: '/auction-edit', component: EditAuction },

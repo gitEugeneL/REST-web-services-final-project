@@ -12,10 +12,9 @@
             </div>
             <div class="form-group">
                 <label>Description</label>
-                <input v-model="description"
-                       type="text"
+                <textarea v-model="description"
                        class="form-control"
-                       placeholder="Auction description">
+                       placeholder="Auction description" />
             </div>
             <div class="form-group">
                 <label>Initial price</label>
