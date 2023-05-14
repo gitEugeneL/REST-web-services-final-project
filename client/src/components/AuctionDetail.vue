@@ -16,21 +16,27 @@
                         <span class="fw-bold me-2">End date: </span>{{ formatDateTime(auction.end_time) }}
                     </li>
                     <li class="list-group-item border-0 py-1">
-                        <span class="fw-bold me-2">Initial price:</span> €{{ auction.starting_price }}
+                        <span class="fw-bold me-2">Initial price:</span> {{ auction.starting_price }}zł
                     </li>
-                    <li class="list-group-item border-0 py-1">
+                    <li class="list-group-item border-0 py-1" v-if="auction.status !== 'FAIlLED'">
                         <span class="fw-bold me-2">Bets: </span>
-                        <span class="bid" v-for="bid in bids"> €{{ bid }}</span>
+                        <span class="bid" v-for="bid in bids"> {{ bid }}zł</span>
                     </li>
                     <li class="list-group-item border-0 py-1">
-                        <span class="fw-bold me-2" v-if="timerText !== null">Current price: </span>
-                        <span class="fw-bold me-2" v-if="timerText === null">Final price: </span>
-                        <span class="text-danger">€{{ auction.current_price }}</span>
+                        <span class="fw-bold me-2"
+                              v-if="auction.status !== 'FAIlLED' && auction.status !== 'PAID' && timerText !== null">
+                            Current price: </span>
+                        <span class="fw-bold me-2"
+                              v-if="auction.status !== 'FAIlLED' && auction.status !== 'PAID' && timerText === null">
+                            Final price: </span>
+                        <span v-if="auction.status !== 'FAIlLED' && auction.status !== 'PAID'" class="text-danger">
+                            {{ auction.current_price }}zł
+                        </span>
                     </li>
                     <li class="list-group-item border-0 py-1">
                         <h5 class="text-danger" v-if="lead">{{ lead }}</h5>
                         <div v-if="auction.status !== 'ACTIVE'">
-                            <h5>This auction is over</h5>
+                            <h5 v-if="auction.winnerId !== user.id">This auction is over</h5>
                         </div>
                         <div v-if="auction.sellerEmail !== user.email && auction.status === 'ACTIVE'">
                             <Error v-if="error" :error="error"/>
@@ -52,7 +58,6 @@
                             <h5 class="text-success">Congratulations you are the winner !!!</h5>
                             <div class="d-flex justify-content-center">
                                 <Pay :auctionId="auction.id"/>
-<!--                                <button class="btn btn-outline-danger">Pay</button>-->
                             </div>
                         </div>
                         <div v-if="auction.status === 'FAILED'">
@@ -62,7 +67,13 @@
                             <h5 class="text-danger">The winner hasn't paid yet</h5>
                         </div>
                         <div v-if="auction.status === 'PAID' && auction.sellerEmail === user.email">
-                            <h5 class="text-success">The winner paid</h5>
+                            <h5 class="text-success">The winner paid {{ auction.current_price }}zł</h5>
+                        </div>
+                        <div v-if="auction.status === 'FAIlLED' && auction.sellerEmail === user.email">
+                            <h5 class="text-danger">No one participated :(</h5>
+                        </div>
+                        <div v-if="auction.status === 'PAID' && auction.winnerId === user.id">
+                            <h5 class="text-success">You paid {{ auction.current_price }}zł</h5>
                         </div>
                     </li>
                 </ul>
@@ -128,7 +139,7 @@
                         const maxEntry = entries.reduce((prev, current) => prev[1] > current[1] ? prev : current);
                         if (this.user) {
                             if (maxEntry[0] === this.user.id && this.auction.status === 'ACTIVE') {
-                                this.lead = `Your bet is in the lead: €${maxEntry[1]}`
+                                this.lead = `Your bet is in the lead: ${maxEntry[1]}zł`
                             } else {
                                 this.lead = '';
                             }
