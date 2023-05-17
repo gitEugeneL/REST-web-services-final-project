@@ -26,7 +26,7 @@ public class AuctionService {
     private final AuctionLotScheduler auctionLotScheduler;
 
 
-    public void createAuction(CreateAuctionDTO createAuctionDTO, GetAuthUserDTO authUser) {
+    public String createAuction(CreateAuctionDTO createAuctionDTO, GetAuthUserDTO authUser) {
 
         if (auctionRepository.findByNameAndStatus(
                 createAuctionDTO.getName().trim().toLowerCase(), Status.ACTIVE).isPresent()) {
@@ -47,6 +47,7 @@ public class AuctionService {
         // scheduler for auction finish ---------------------------------------------
         auctionLotScheduler.endAuction(auctionLot.getEnd_time(), auctionLot.getId());
         // --------------------------------------------------------------------------
+        return auctionLot.getId();
     }
 
 

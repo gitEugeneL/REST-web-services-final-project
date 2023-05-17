@@ -30,17 +30,16 @@ public class AuctionController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<String> CreateAuction(
+    public ResponseEntity<String> createAuction(
             @NonNull @RequestHeader("Authorization") String token,
-            @RequestBody @Valid CreateAuctionDTO dto,
-            BindingResult bindingResult) {
+            @RequestBody @Valid CreateAuctionDTO dto, BindingResult bindingResult) {
         // get authUser or throw
         GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
         // validate dto or throw
         dtoValidator.validate(bindingResult);
         // create auction or throw
-        auctionService.createAuction(dto, authUser);
-        return ResponseEntity.ok("Auction lot added successfully");
+        String auctionId = auctionService.createAuction(dto, authUser);
+        return ResponseEntity.ok(auctionId);
     }
 
 

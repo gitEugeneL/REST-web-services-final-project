@@ -1,8 +1,9 @@
 <template>
     <div class="wrapper">
         <div v-if="auction">
-            <div>
-                <img class="card-img-top" src="https://via.placeholder.com/300x200" alt="Card image cap">
+            <div class="img-block">
+                <img class="card-img-top" v-if="!image" src="https://via.placeholder.com/300x200" alt="">
+                <img class="card-img" v-if="image" :src="image" alt="">
             </div>
             <div class="card-body">
                 <div class="timer text-danger">{{ this.timerText }}</div>
@@ -111,7 +112,9 @@
                 error: null,
                 enteredBet: '',
 
-                lead: ''
+                lead: '',
+
+                image: null
             }
         },
 
@@ -121,6 +124,8 @@
                 this.getAuctionData();
                 this.timerLogic();
             }, 1000);
+
+            await this.getImage(this.auction.id);
         },
 
 
@@ -145,6 +150,18 @@
                             }
                         }
                     }
+                }
+            },
+
+            async getImage(auctionId) {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`${APPLICATION_SERVER}/api/image/download/${auctionId}`, {
+                    headers: { Authorization: 'Bearer ' + token },
+                    responseType: 'arraybuffer'
+                })
+                if (response.status === 200) {
+                    const blob = new Blob([response.data], { type: response.headers['content-type'] });
+                    this.image = URL.createObjectURL(blob);
                 }
             },
 
@@ -250,5 +267,14 @@
         text-align: center;
         margin-bottom: 10px;
         margin-top: 10px;
+    }
+
+    .card-img {
+        height: auto;
+        width: 200px;
+    }
+
+    .img-block {
+        text-align: center;
     }
 </style>

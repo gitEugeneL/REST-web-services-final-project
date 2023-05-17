@@ -40,6 +40,8 @@ public class AuctionLot {
 
     private String winnerId;
 
+    private byte[] imageData;
+
 
     public AuctionLot(String sellerId, String seller_email, String seller_name,
                       String name, String description, BigDecimal starting_price){

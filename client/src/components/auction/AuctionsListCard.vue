@@ -2,7 +2,6 @@
     <div class="row">
         <div v-for="auction in auctions" :key="auction.id" class="col-md-4">
             <div class="card">
-                <img v-if="auction.status !== 'PAID'" class="card-img-top" src="https://via.placeholder.com/300x200" alt="Card image cap">
                 <div class="card-body text-center">
                     <h5 class="card-title">{{ auction.name }}
                         <span class="your-card" v-if="auction.sellerEmail === user.email"> (Your)</span></h5>
@@ -46,6 +45,8 @@
 <script>
 import store from "@/vuex";
 import {mapGetters} from "vuex";
+import axios from "axios";
+import {APPLICATION_SERVER} from "@/config";
 
 export default {
     name: "AuctionsListCard",
@@ -71,7 +72,7 @@ export default {
 
         async saveAuctionId(auctionId) {
             await store.dispatch('auctionId', auctionId);
-        }
+        },
     }
 }
 </script>

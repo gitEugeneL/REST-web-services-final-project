@@ -23,6 +23,13 @@
                        class="form-control"
                        placeholder="Auction initial price">
             </div>
+            <div class="form-group">
+                <label>Image</label>
+                <br>
+                <input type="file" @change="handleImageUpload">
+            </div>
+
+
             <h5>Auction time</h5>
             <div class="form-group">
                 <div class="radio-wrapper">
@@ -67,7 +74,8 @@ export default {
             description: '',
             startingPrice: '',
             lifeTime: '',
-            error: ''
+            error: '',
+            file: null
         }
     },
 
@@ -88,15 +96,28 @@ export default {
                 }
                 const token = localStorage.getItem('token');
                 const response = await axios.post(`${APPLICATION_SERVER}/api/auction/create`, data, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                    headers: { Authorization: `Bearer ${token}` }
                 });
                 if (response.status === 200) {
+                    if (this.file) {
+                        const imageData = new FormData();
+                        imageData.append('image', this.file);
+                        const uploadImage = await axios.post(`${APPLICATION_SERVER}/api/image/upload/${response.data}`,
+                            imageData, { headers: {
+                                Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                    }
                     await router.push('/');
                 }
 
             } catch (e) {
                 this.error = e.response.data.message;
             }
+        },
+
+        async handleImageUpload(e) {
+            this.file = e.target.files[0];
         }
     }
 }
