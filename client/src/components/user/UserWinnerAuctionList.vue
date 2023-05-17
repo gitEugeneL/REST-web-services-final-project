@@ -1,17 +1,17 @@
 <template>
     <div class="container">
-        <h4>List of your active auctions</h4>
+        <h4>List of auctions won but not yet paid for</h4>
         <AuctionsListCard :auctions="auctions" />
     </div>
 </template>
 
 <script>
-import AuctionsListCard from "@/components/AuctionsListCard.vue";
+import AuctionsListCard from "@/components/auction/AuctionsListCard.vue";
 import axios from "axios";
 import {APPLICATION_SERVER} from "@/config";
 
 export default {
-    name: "UserAuctionsList",
+    name: "UserWinnerAuctionList",
 
     components: { AuctionsListCard },
 
@@ -23,11 +23,13 @@ export default {
 
     async created() {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${APPLICATION_SERVER}/api/auction/auth-user-auctions`, {
+        const response = await axios.get(`${APPLICATION_SERVER}/api/auction/auth-winner-auctions`, {
             headers: { Authorization: 'Bearer ' + token }
         });
-        this.auctions = response.data.filter(auction => auction.status === 'ACTIVE');
+        this.auctions = response.data;
     }
+
+
 }
 </script>
 

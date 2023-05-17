@@ -21,7 +21,6 @@
                 <router-link to="/im-winner" class="btn btn-outline-danger">I'm winner</router-link>
                 <router-link to="/my-purchased-auctions" class="btn btn-outline-success">Purchased auctions</router-link>
                 <router-link to="/my-sold-products" class="btn btn-outline-success">My sold products</router-link>
-
             </div>
         </div>
     </div>

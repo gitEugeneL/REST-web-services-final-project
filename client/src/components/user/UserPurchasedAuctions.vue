@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import AuctionsListCard from "@/components/AuctionsListCard.vue";
+import AuctionsListCard from "@/components/auction/AuctionsListCard.vue";
 import axios from "axios";
 import {APPLICATION_SERVER} from "@/config";
 

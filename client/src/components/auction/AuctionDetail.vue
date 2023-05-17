@@ -90,7 +90,7 @@
     import Error from "@/components/Error.vue";
     import store from "@/vuex";
     import router from "@/router";
-    import Pay from "@/components/Pay.vue";
+    import Pay from "@/components/auction/Pay.vue";
 
     export default {
         name: 'AuctionDetail',

@@ -1,19 +1,17 @@
 <template>
     <div class="container">
-        <h4>List of active auctions</h4>
+        <h4>List of active auctions in which you participate</h4>
         <AuctionsListCard :auctions="auctions" />
     </div>
 </template>
 
-
 <script>
+import AuctionsListCard from "@/components/auction/AuctionsListCard.vue";
 import axios from "axios";
 import {APPLICATION_SERVER} from "@/config";
-import AuctionsListCard from "@/components/AuctionsListCard.vue";
-import {mapGetters} from "vuex";
 
 export default {
-    name: "ActiveAuctionsList",
+    name: "UserParticipateAuctionList",
 
     components: { AuctionsListCard },
 
@@ -25,7 +23,7 @@ export default {
 
     async created() {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${APPLICATION_SERVER}/api/auction`, {
+        const response = await axios.get(`${APPLICATION_SERVER}/api/auction/auth-participant-auctions`, {
             headers: { Authorization: 'Bearer ' + token }
         });
         this.auctions = response.data;
@@ -35,8 +33,8 @@ export default {
 
 
 <style scoped>
-h4 {
-    width: fit-content;
-    margin: auto auto 30px;
-}
+    h4 {
+        width: fit-content;
+        margin: auto auto 30px;
+    }
 </style>
