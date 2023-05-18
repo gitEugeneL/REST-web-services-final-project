@@ -1,6 +1,7 @@
 <template>
     <div class="wrapper">
         <div v-if="auction">
+            <Error v-if="error" :error="error"/>
             <div class="img-block">
                 <img class="card-img-top" v-if="!image" src="https://via.placeholder.com/300x200" alt="">
                 <img class="card-img" v-if="image" :src="image" alt="">
@@ -51,8 +52,12 @@
                         <div v-if="auction.sellerEmail === user.email && auction.status === 'ACTIVE'">
                             <h5>This is your auction</h5>
                             <div class="d-flex justify-content-center">
-                                <button @click="editAuctionHandler" class="btn btn-outline-primary edit-btn">Edit auction</button>
-                                <button class="btn btn-outline-danger">Delete auction</button>
+                                <button @click="editAuctionHandler" class="btn btn-outline-primary edit-btn">
+                                    Edit auction
+                                </button>
+                                <button @click="deleteAuctionHandler" class="btn btn-outline-danger">
+                                    Delete auction
+                                </button>
                             </div>
                         </div>
                         <div v-if="auction.sellerEmail !== user.email && auction.status === 'FINISHED' && auction.winnerId === user.id">
@@ -87,7 +92,7 @@
 <script>
     import {mapGetters} from "vuex";
     import axios from "axios";
-    import {APPLICATION_SERVER} from "@/config";
+    import {APPLICATION_SERVER, AUTH_SERVER} from "@/config";
     import Error from "@/components/Error.vue";
     import store from "@/vuex";
     import router from "@/router";
@@ -121,10 +126,10 @@
         async created() {
             await this.getAuctionData();
             this.countdown = setInterval(() => {
+                if (!this.countdown) { return; }
                 this.getAuctionData();
                 this.timerLogic();
             }, 1000);
-
             await this.getImage(this.auction.id);
         },
 
@@ -154,15 +159,18 @@
             },
 
             async getImage(auctionId) {
-                const token = localStorage.getItem('token');
-                const response = await axios.get(`${APPLICATION_SERVER}/api/image/download/${auctionId}`, {
-                    headers: { Authorization: 'Bearer ' + token },
-                    responseType: 'arraybuffer'
-                })
-                if (response.status === 200) {
-                    const blob = new Blob([response.data], { type: response.headers['content-type'] });
-                    this.image = URL.createObjectURL(blob);
-                }
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await axios.get(`${APPLICATION_SERVER}/api/image/download/${auctionId}`, {
+                        headers: { Authorization: 'Bearer ' + token },
+                        responseType: 'arraybuffer'
+                    })
+                    if (response.status === 200) {
+                        const blob = new Blob([response.data], { type: response.headers['content-type'] });
+                        this.image = URL.createObjectURL(blob);
+                    }
+                } catch (e) { }
+
             },
 
             async handleBetSubmit() {
@@ -214,6 +222,22 @@
             async editAuctionHandler() {
                 await store.dispatch('auction', this.auction);
                 await router.push('/auction-edit');
+            },
+
+            async deleteAuctionHandler() {
+                try {
+                    const response = await axios.delete(`${APPLICATION_SERVER}/api/auction/${this.auction.id}`, {
+                        headers: {Authorization: 'Bearer ' + localStorage.getItem('token')}
+                    });
+                    if (response.status === 200) {
+                        this.countdown = null;
+                        await store.dispatch('auction', null);
+                        await router.push('/my-auctions');
+
+                    }
+                } catch (e) {
+                    this.error = e.response.data.message;
+                }
             }
         }
     }

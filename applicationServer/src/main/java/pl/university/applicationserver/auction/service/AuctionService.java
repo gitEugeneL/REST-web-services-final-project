@@ -3,12 +3,14 @@ package pl.university.applicationserver.auction.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.university.applicationserver.auction.document.AuctionLot;
+import pl.university.applicationserver.auction.document.Image;
 import pl.university.applicationserver.auction.document.Status;
 import pl.university.applicationserver.auction.dto.CreateAuctionDTO;
 import pl.university.applicationserver.auction.dto.CreateBetDTO;
 import pl.university.applicationserver.auction.dto.GetAuctionDTO;
 import pl.university.applicationserver.auction.dto.UpdateAuctionDTO;
 import pl.university.applicationserver.auction.exception.ApiRequestException;
+import pl.university.applicationserver.auction.exception.ImageRepository;
 import pl.university.applicationserver.auction.repository.AuctionRepository;
 import pl.university.applicationserver.auction.sheduler.AuctionLotScheduler;
 import pl.university.applicationserver.authServerIntegration.dto.GetAuthUserDTO;
@@ -24,6 +26,7 @@ public class AuctionService {
 
     private final AuctionRepository auctionRepository;
     private final AuctionLotScheduler auctionLotScheduler;
+    private final ImageRepository imageRepository;
 
 
     public String createAuction(CreateAuctionDTO createAuctionDTO, GetAuthUserDTO authUser) {
@@ -79,7 +82,8 @@ public class AuctionService {
                     } else {
                         throw new ApiRequestException("You can't pay for this auction");
                     }
-                }).orElseThrow(() -> new ApiRequestException("A suitable auction was not found"));
+                })
+                .orElseThrow(() -> new ApiRequestException("A suitable auction was not found"));
     }
 
 
@@ -93,12 +97,18 @@ public class AuctionService {
         if(!Objects.equals(authUser.getId(), auction.getSellerId()))
             throw new ApiRequestException("User is not authorized to update this auction");
 
+        if (auction.getParticipants() != null)
+            throw new ApiRequestException("You can't delete an auction that has participants");
+
+        // delete image
+        imageRepository.findByAuctionId(id).ifPresent(imageRepository::delete);
+        // delete auction
         auctionRepository.delete(auction);
     }
 
 
     public void createBet(CreateBetDTO dto, GetAuthUserDTO authUser) {
-        //--------------------------------------------------------------------
+        //---------------------------------------------------------------------
         // only authUser can place a bet and cannot place a bet on his product
         // --------------------------------------------------------------------
         String auctionId = dto.getAuctionId();

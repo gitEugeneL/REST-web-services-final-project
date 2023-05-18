@@ -74,10 +74,8 @@ public class AuctionController {
     public ResponseEntity<String> deleteAuction(
             @NonNull @RequestHeader("Authorization") String token,
             @PathVariable("auction-id") String id) {
-
         // get authUser or throw
         GetAuthUserDTO authUser = authIntegrationService.getAuthUser(token);
-
         auctionService.deleteAuction(authUser, id);
         return ResponseEntity.ok("Auction id: " + id + " successfully deleted");
     }

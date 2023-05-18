@@ -1,6 +1,7 @@
 <template>
     <li class="nav-item">
-        <a href="javascript:void(0)" @click="handleClickLogout" data-toggle="modal"  data-target="#deleteModal" class="nav-link text-danger">Logout</a>
+        <a href="javascript:void(0)" @click="handleClickLogout" data-toggle="modal"
+           data-target="#deleteModal" class="nav-link text-danger">Logout</a>
     </li>
 </template>
 
@@ -28,7 +29,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-
-</style>
