@@ -61,7 +61,7 @@
             return {
                 email: '',
                 password: '',
-                confirmPassword: '',    // todo confirm password validation
+                confirmPassword: '',
                 fistName: '',
                 lastName: '',
                 error: ''
@@ -71,6 +71,12 @@
         methods: {
             async handleSubmit() {
                 try {
+                    if (this.password !== this.confirmPassword) {
+                        this.error = 'Passwords do not match';
+                        return;
+                    }
+                    this.error = '';
+
                     const data = {
                         login: this.email,
                         password: this.password,
