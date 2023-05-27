@@ -63,6 +63,3 @@ public class PaymentController {
         return ResponseEntity.ok(getPaidAuction);
     }
 }
-
-
-

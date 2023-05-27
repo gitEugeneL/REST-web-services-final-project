@@ -64,7 +64,7 @@ public class UserService {
         //--------------------
         return userRepository.findByLogin(authUserLogin)
                 .map(user -> new GetUserDTO(user.getId(), user.getLogin(), user.getFirstName(), user.getLastName()))
-                .orElseThrow(() -> new ApiRequestException("User does not exit"));
+                .orElseThrow(() -> new ApiRequestException("User does not exist"));
     }
 
 

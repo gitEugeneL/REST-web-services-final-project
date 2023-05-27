@@ -95,7 +95,7 @@ public class AuctionService {
                 .orElseThrow(() -> new ApiRequestException("Auction not found for id: " + id));
 
         if(!Objects.equals(authUser.getId(), auction.getSellerId()))
-            throw new ApiRequestException("User is not authorized to update this auction");
+            throw new ApiRequestException("User is not authorized to delete this auction");
 
         if (auction.getParticipants() != null)
             throw new ApiRequestException("You can't delete an auction that has participants");
@@ -139,7 +139,7 @@ public class AuctionService {
                         return auctionRepository.save(auctionLot);
                     }
                     else
-                        throw new ApiRequestException("the bet is less than the current price");
+                        throw new ApiRequestException("The bet is less than the current price");
                 })
                 .orElseThrow(() -> new ApiRequestException("Auction lot not fount for id: " + auctionId));
     }

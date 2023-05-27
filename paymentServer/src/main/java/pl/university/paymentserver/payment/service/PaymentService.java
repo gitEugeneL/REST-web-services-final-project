@@ -71,8 +71,8 @@ public class PaymentService {
         return Session.create(
                 SessionCreateParams.builder()
                         .addLineItem(item)
-                        .setSuccessUrl("http://localhost:3000/success") // todo add client port and page
-                        .setCancelUrl("http://localhost:3000/cancel") // // todo add client port and page
+                        .setSuccessUrl("http://localhost:3000/my-sold-products")
+                        .setCancelUrl("http://localhost:3000/cancel")
                         .setMode(SessionCreateParams.Mode.PAYMENT)
                         .build()
 

@@ -31,12 +31,12 @@ public class AuthController {
     }
 
 
-    @PostMapping("validate")
-    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String token) {
-        return authService.validate(token)
-                ? ResponseEntity.ok("token is valid")
-                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token is not valid");
-    }
+//    @PostMapping("validate")
+//    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String token) {
+//        return authService.validate(token)
+//                ? ResponseEntity.ok("token is valid")
+//                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token is not valid");
+//    }
 
 
     @PreAuthorize("hasAuthority('USER')")
