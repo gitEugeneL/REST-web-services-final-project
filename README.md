@@ -1,5 +1,6 @@
 # REST-web-services-final-project
-**4th semester.** Final project on the subject of **REST-oriented web services**
+**4th semester.** 
+Final project on the subject of **REST-oriented web services**.
 
 
 This is a prototype auction, which consists of 3 independent REST servers and databases.
@@ -96,8 +97,6 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 
 
 
-------------------------------------------------------------------------------------------
-
 ## Authentication Server
 
 ### Base Url: http://localhost:8080
@@ -105,9 +104,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Login
 <details>
 <summary>
-    <code>POST</code> <code>
-    <b>/api/user/login</b></code> 
-    <code>(allows to login, issues a bearer token)</code>
+    <code>POST</code> <code><b>/api/user/login</b></code><code>(allows to login, issues a bearer token)</code>
 </summary>
 
 ##### Parameters
@@ -126,9 +123,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Logout (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/user/logout</b></code> 
-    <code>(allows to logout, deactivates the token)</code>
+    <code>GET</code> <code><b>/api/user/logout</b></code><code>(allows to logout, deactivates the token)</code>
 </summary>
 
 ##### Parameters
@@ -144,9 +139,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Create user
 <details>
 <summary>
-    <code>POST</code> <code>
-    <b>/api/user/create</b></code> 
-    <code>(allows to create an account)</code>
+    <code>POST</code> <code><b>/api/user/create</b></code><code>(allows to create an account)</code>
 </summary>
 
 ##### Parameters
@@ -170,9 +163,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Get users (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/user</b></code> 
-    <code>(find all active users)</code>
+    <code>GET</code> <code><b>/api/user</b></code><code>(find all active users)</code>
 </summary>
 
 ##### Parameters
@@ -188,9 +179,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Get one user (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/user/{ userId }</b></code> 
-    <code>(find one active user by id)</code>
+    <code>GET</code> <code><b>/api/user/{ userId }</b></code><code>(find one active user by id)</code>
 </summary>
 
 ##### Parameters
@@ -207,9 +196,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Get authorized user (*token required*) 
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/user/auth/info</b></code> 
-    <code>(get only this authorized user)</code>
+    <code>GET</code> <code><b>/api/user/auth/info</b></code><code>(get only this authorized user)</code>
 </summary>
 
 ##### Parameters
@@ -226,9 +213,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Update authorized user (*token required*)
 <details>
 <summary>
-    <code>PUT</code> <code>
-    <b>/api/user</b></code> 
-    <code>(update only this authorized user)</code>
+    <code>PUT</code> <code><b>/api/user</b></code><code>(update only this authorized user)</code>
 </summary>
 
 ##### Parameters
@@ -250,9 +235,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Delete authorized user (*token required*)
 <details>
 <summary>
-    <code>DELETE</code> <code>
-    <b>/api/user</b></code> 
-    <code>(delete only this authorized user)</code>
+    <code>DELETE</code> <code><b>/api/user</b></code><code>(delete only this authorized user)</code>
 </summary>
 
 ##### Parameters
@@ -265,8 +248,6 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 > | `401`     | `application/json`         | `{"status": "UNAUTHORIZED", "message": "token is not valid"}`                            |            
 </details>
 
-------------------------------------------------------------------------------------------
-
 
 ## Application Server
 
@@ -276,9 +257,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Create a new auction lot (*token required*)
 <details>
 <summary>
-    <code>POST</code> <code>
-    <b>/api/auction/create</b></code> 
-    <code>(allows to create a new auction lot)</code>
+    <code>POST</code> <code><b>/api/auction/create</b></code><code>(allows to create a new auction lot)</code>
 </summary>
 
 ##### Parameters
@@ -303,9 +282,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Upload an image for the auction lot (*token required*) (*image required*)
 <details>
 <summary>
-    <code>POST</code> <code>
-    <b>/api/image/upload/{ auctionId }</b></code> 
-    <code>(allows to attach an image to your auction)</code>
+    <code>POST</code> <code><b>/api/image/upload/{ auctionId }</b></code><code>(allows to attach an image to your auction)</code>
 </summary>
 
 
@@ -325,9 +302,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/image/download/{ auctionId }</b></code> 
-    <code>(allows you to get an auction image)</code>
+    <code>GET</code> <code><b>/api/image/download/{ auctionId }</b></code><code>(allows you to get an auction image)</code>
 </summary>
 
 ##### Parameters
@@ -345,9 +320,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Update the auction lot (*token required*)
 <details>
 <summary>
-    <code>PUT</code> <code>
-    <b>/api/auction/{ auctionId }</b></code> 
-    <code>(allows an authorized user to update their auction)</code>
+    <code>PUT</code> <code><b>/api/auction/{ auctionId }</b></code><code>(allows an authorized user to update their auction)</code>
 </summary>
 
 ##### Parameters
@@ -369,9 +342,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Delete an authorized user's auction (*token required*)
 <details>
 <summary>
-    <code>DELETE</code> <code>
-    <b>/api/user</b></code> 
-    <code>(allows an authorized user to delete his lot if there aren't participants)</code>
+    <code>DELETE</code> <code><b>/api/user</b></code><code>(allows an authorized user to delete his lot if there aren't participants)</code>
 </summary>
 
 ##### Parameters
@@ -391,9 +362,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Place a bet (*token required*)
 <details>
 <summary>
-    <code>POST</code> <code>
-    <b>/api/user</b></code> 
-    <code>(allows to place a bet)</code>
+    <code>POST</code> <code><b>/api/user</b></code><code>(allows to place a bet)</code>
 </summary>
 
 ##### Parameters
@@ -418,9 +387,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Get active auction lots (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/auction</b></code> 
-    <code>(find all active auction lots)</code>
+    <code>GET</code> <code><b>/api/auction</b></code><code>(find all active auction lots)</code>
 </summary>
 
 ##### Parameters
@@ -436,9 +403,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Get auctions that were created by an authorized user (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/auction/auth-user-auctions</b></code> 
-    <code>(find all auction lots that were created by an authorized user)</code>
+    <code>GET</code> <code><b>/api/auction/auth-user-auctions</b></code><code>(find all auction lots that were created by an authorized user)</code>
 </summary>
 
 ##### Parameters
@@ -454,9 +419,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Get auctions that were created by an authorized user (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/auction/auth-participant-auctions</b></code> 
-    <code>(find all active auctions in which the authorized user participates)</code>
+    <code>GET</code> <code><b>/api/auction/auth-participant-auctions</b></code><code>(find all active auctions in which the authorized user participates)</code>
 </summary>
 
 ##### Parameters
@@ -472,9 +435,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Get finished auctions, where the authorized user is winner (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/auction/auth-winner-auctions</b></code> 
-    <code>(find all finished auctions, where the authorized user is winner)</code>
+    <code>GET</code> <code><b>/api/auction/auth-winner-auctions</b></code><code>(find all finished auctions, where the authorized user is winner)</code>
 </summary>
 
 ##### Parameters
@@ -490,9 +451,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Get auctions paid for by an authorized user (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/auction/auth-purchased-auctions</b></code> 
-    <code>(find all auctions paid for by an authorized user)</code>
+    <code>GET</code> <code><b>/api/auction/auth-purchased-auctions</b></code><code>(find all auctions paid for by an authorized user)</code>
 </summary>
 
 ##### Parameters
@@ -508,9 +467,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Get one auction lot (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/auction/{ auctionId }</b></code> 
-    <code>(find one auction lot by id)</code>
+    <code>GET</code> <code><b>/api/auction/{ auctionId }</b></code><code>(find one auction lot by id)</code>
 </summary>
 
 ##### Parameters
@@ -523,8 +480,6 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 </details>
 
 
-------------------------------------------------------------------------------------------
-
 ## Payment Server
 
 ### Base Url: http://localhost:8082
@@ -532,9 +487,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Initial payment (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/payment/{ auctionId }</b></code> 
-    <code>(initial payment)</code>
+    <code>GET</code> <code><b>/api/payment/{ auctionId }</b></code><code>(initial payment)</code>
 </summary>
 
 ##### Parameters
@@ -551,9 +504,7 @@ https://docs.spring.io/spring-boot/docs/1.5.16.RELEASE/reference/html/using-boot
 #### Stripe validate webhook (*token required*)
 <details>
 <summary>
-    <code>GET</code> <code>
-    <b>/api/payment/webhook</b></code> 
-    <code>webhook for validate payment</code>
+    <code>GET</code> <code><b>/api/payment/webhook</b></code><code>webhook for validate payment</code>
 </summary>
 
 https://stripe.com/docs/api/webhook_endpoints
