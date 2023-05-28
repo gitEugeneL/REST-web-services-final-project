@@ -71,7 +71,7 @@ public class PaymentService {
         return Session.create(
                 SessionCreateParams.builder()
                         .addLineItem(item)
-                        .setSuccessUrl("http://localhost:3000/my-sold-products")
+                        .setSuccessUrl("http://localhost:3000/my-purchased-auctions")
                         .setCancelUrl("http://localhost:3000/cancel")
                         .setMode(SessionCreateParams.Mode.PAYMENT)
                         .build()

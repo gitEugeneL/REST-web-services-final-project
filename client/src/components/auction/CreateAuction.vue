@@ -38,7 +38,7 @@
                     <input v-model="lifeTime" value="three-days" type="radio" name="select" id="option-3">
                     <input v-model="lifeTime" value="one-week" type="radio" name="select" id="option-4">
                     <label for="option-1" class="option option-1">
-                        <span>Test-5min</span>
+                        <span>Test5min</span>
                     </label>
                     <label for="option-2" class="option option-2">
                         <span>1 day</span>
